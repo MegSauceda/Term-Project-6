@@ -9,3 +9,7 @@ This project is to develop a Java-based SMS that will enable users to add studen
 - Moises Noriega Peralta
 - Meghan Sauceda
 
+# Project Roles
+- TBD
+- TBD
+- TBD
