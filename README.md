@@ -10,6 +10,6 @@ This project is to develop a Java-based SMS that will enable users to add studen
 - Meghan Sauceda
 
 # Project Roles
-- TBD
-- TBD
-- TBD
+- Student Info and OOP - Meghan Sauceda
+- Application and UI - Moises Noriega Peralta
+- Reports and File Handling - Derick Hicks
