@@ -19,7 +19,7 @@ public class Main
         while (choice != 0)
         {
             printMenu();
-            choice = readInt(keyboard, "Choose an option: ");
+            choice = readInt(keyboard, "Please select an option: ");
 
             switch (choice)
             {
@@ -59,7 +59,7 @@ public class Main
         }
     }
 
-    // Displays the main of options
+    // Displays the main menu of options
     public static void printMenu()
     {
         System.out.println();
@@ -80,9 +80,8 @@ public class Main
     public static void addStudent(Scanner keyboard, StudentManagementSystem sms)
     {
         String name = readText(keyboard, "Student name: ");
-        int id = readInt(keyboard, "Student ID: ");
-        String type = readText(keyboard,
-                "Type (U = Undergraduate, G = Graduate): ");
+        int id = readPositiveInt(keyboard, "Student ID: ");
+        String type = readStudentType(keyboard);
 
         Student s;
         if (type.equalsIgnoreCase("G"))
@@ -162,6 +161,7 @@ public class Main
     // Lists every student in the system
     public static void listStudents(StudentManagementSystem sms)
     {
+        System.out.println("--- Student List ---");
         if (sms.getStudents().size() == 0)
         {
             System.out.println("No students yet.");
@@ -175,6 +175,7 @@ public class Main
                         + " (" + s.getStudentType() + ")");
             }
         }
+        System.out.println("--------------------");
     }
 
     // Adds a subject and grade to a student
@@ -221,12 +222,33 @@ public class Main
             String text = keyboard.nextLine();
             try
             {
-                number = Integer.parseInt(text);
+                number = Integer.parseInt(text.trim());
                 valid = true;
             }
             catch (NumberFormatException e)
             {
                 System.out.println("Please enter a whole number.");
+            }
+        }
+        return number;
+    }
+
+    // Reads a whole number greater than 0, asking again until valid
+    public static int readPositiveInt(Scanner keyboard, String prompt)
+    {
+        int number = 0;
+        boolean valid = false;
+
+        while (!valid)
+        {
+            number = readInt(keyboard, prompt);
+            if (number > 0)
+            {
+                valid = true;
+            }
+            else
+            {
+                System.out.println("Please enter a number greater than 0.");
             }
         }
         return number;
@@ -244,7 +266,7 @@ public class Main
             String text = keyboard.nextLine();
             try
             {
-                number = Double.parseDouble(text);
+                number = Double.parseDouble(text.trim());
                 valid = true;
             }
             catch (NumberFormatException e)
@@ -263,12 +285,33 @@ public class Main
         while (text.length() == 0)
         {
             System.out.print(prompt);
-            text = keyboard.nextLine();
+            text = keyboard.nextLine().trim();
             if (text.length() == 0)
             {
                 System.out.println("Input cannot be empty.");
             }
         }
         return text;
+    }
+
+    // Reads U or G, asking again until the input is valid
+    public static String readStudentType(Scanner keyboard)
+    {
+        String type = "";
+        boolean valid = false;
+
+        while (!valid)
+        {
+            type = readText(keyboard, "Type (U = Undergraduate, G = Graduate): ");
+            if (type.equalsIgnoreCase("U") || type.equalsIgnoreCase("G"))
+            {
+                valid = true;
+            }
+            else
+            {
+                System.out.println("Please enter U or G.");
+            }
+        }
+        return type;
     }
 }
