@@ -12,55 +12,62 @@ public class StudentManagementSystem
 {
     private ArrayList<Student> students;
 
+    //Creates an empty system
     public StudentManagementSystem()
     {
         students = new ArrayList<Student>();
     }
 
+    // Returns the list of students
     public ArrayList<Student> getStudents()
     {
         return students;
     }
 
-    // Replaces list 
+    // Replaces the list of students
     public void setStudents(ArrayList<Student> list)
     {
         students = list;
     }
+     //Searches for a student by ID.
 
-    // Returns the student with this ID OR null if not found 
     public Student findStudent(int id)
     {
-        for (Student s : students)
+        Student found = null;
+        for (int i = 0; i < students.size(); i++)
         {
-            if (s.getStudentID() == id)
+            if (students.get(i).getStudentID() == id)
             {
-                return s;
+                found = students.get(i);
             }
         }
-        return null;
+        return found;
     }
 
-    // Adds a student or returns false if the ID already exists
+    //Adds a student if the ID is not already used.
+   
     public boolean addStudent(Student s)
     {
-        if (findStudent(s.getStudentID()) != null)
+        boolean added = false;
+        if (findStudent(s.getStudentID()) == null)
         {
-            return false;
+            students.add(s);
+            added = true;
         }
-        students.add(s);
-        return true;
+        return added;
     }
 
-    // Removes a student by ID or returns true if removed
+     //Removes a student by ID.
+    
     public boolean removeStudent(int id)
     {
+        boolean removed = false;
         Student s = findStudent(id);
-        if (s == null)
+        if (s != null)
         {
-            return false;
+            students.remove(s);
+            removed = true;
         }
-        students.remove(s);
-        return true;
-    }   
+        return removed;
+    }
 }

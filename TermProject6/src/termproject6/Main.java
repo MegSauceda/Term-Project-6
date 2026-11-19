@@ -10,39 +10,63 @@ import java.util.Scanner;
  */
 public class Main 
 {
- private static Scanner input = new Scanner(System.in);
-    private static StudentManagementSystem sms = new StudentManagementSystem();
-
-    public static void main(String[] args)
+ public static void main(String[] args)
     {
+        Scanner keyboard = new Scanner(System.in);
+        StudentManagementSystem sms = new StudentManagementSystem();
         int choice = -1;
+
         while (choice != 0)
         {
             printMenu();
-            choice = readInt("Choose an option: ");
+            choice = readInt(keyboard, "Choose an option: ");
+
             switch (choice)
             {
-                case 1: addStudent(); break;
-                case 2: removeStudent(); break;
-                case 3: updateStudent(); break;
-                case 4: viewStudent(); break;
-                case 5: listStudents(); break;
-                case 6: addGrade(); break;
-                case 7: System.out.println("Reports - coming from Derick"); break;
-                case 8: System.out.println("Save - coming from Derick"); break;
-                case 9: System.out.println("Load - coming from Derick"); break;
-                case 0: System.out.println("Goodbye!"); break;
-                default: System.out.println("Invalid option.");
+                case 1:
+                    addStudent(keyboard, sms);
+                    break;
+                case 2:
+                    removeStudent(keyboard, sms);
+                    break;
+                case 3:
+                    updateStudent(keyboard, sms);
+                    break;
+                case 4:
+                    viewStudent(keyboard, sms);
+                    break;
+                case 5:
+                    listStudents(sms);
+                    break;
+                case 6:
+                    addGrade(keyboard, sms);
+                    break;
+                case 7:
+                    System.out.println(">> Reports are not available yet.");
+                    break;
+                case 8:
+                    System.out.println(">> Save is not available yet.");
+                    break;
+                case 9:
+                    System.out.println(">> Load is not available yet.");
+                    break;
+                case 0:
+                    System.out.println("Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid option.");
             }
         }
     }
 
-    private static void printMenu()
+    // Displays the main of options
+    public static void printMenu()
     {
-        System.out.println("\n=== Student Management System ===");
+        System.out.println();
+        System.out.println("=== Student Management System ===");
         System.out.println("1. Add student");
         System.out.println("2. Remove student");
-        System.out.println("3. Update student");
+        System.out.println("3. Update student name");
         System.out.println("4. View student details");
         System.out.println("5. List all students");
         System.out.println("6. Add grade for a student");
@@ -52,11 +76,14 @@ public class Main
         System.out.println("0. Exit");
     }
 
-    private static void addStudent()
+    // Adds a new undergraduate or graduate student
+    public static void addStudent(Scanner keyboard, StudentManagementSystem sms)
     {
-        String name = readText("Student name: ");
-        int id = readInt("Student ID: ");
-        String type = readText("Type (U = Undergraduate, G = Graduate): ");
+        String name = readText(keyboard, "Student name: ");
+        int id = readInt(keyboard, "Student ID: ");
+        String type = readText(keyboard,
+                "Type (U = Undergraduate, G = Graduate): ");
+
         Student s;
         if (type.equalsIgnoreCase("G"))
         {
@@ -66,6 +93,7 @@ public class Main
         {
             s = new UndergraduateStudent(name, id);
         }
+
         if (sms.addStudent(s))
         {
             System.out.println("Student added.");
@@ -76,122 +104,171 @@ public class Main
         }
     }
 
-    private static void removeStudent()
+    // Removes a student by ID
+    public static void removeStudent(Scanner keyboard, StudentManagementSystem sms)
     {
-        int id = readInt("ID to remove: ");
-        System.out.println(sms.removeStudent(id) ? "Removed." : "Student not found.");
+        int id = readInt(keyboard, "ID to remove: ");
+        if (sms.removeStudent(id))
+        {
+            System.out.println("Student removed.");
+        }
+        else
+        {
+            System.out.println("Student not found.");
+        }
     }
 
-    private static void updateStudent()
+    // Changes a student's name
+    public static void updateStudent(Scanner keyboard, StudentManagementSystem sms)
     {
-        Student s = sms.findStudent(readInt("ID to update: "));
+        int id = readInt(keyboard, "ID to update: ");
+        Student s = sms.findStudent(id);
+
         if (s == null)
         {
             System.out.println("Student not found.");
-            return;
         }
-        s.setName(readText("New name: "));
-        System.out.println("Updated.");
+        else
+        {
+            String newName = readText(keyboard, "New name: ");
+            s.setName(newName);
+            System.out.println("Student updated.");
+        }
     }
 
-    private static void viewStudent()
+    // Shows one student's subjects, grades, and average
+    public static void viewStudent(Scanner keyboard, StudentManagementSystem sms)
     {
-        Student s = sms.findStudent(readInt("Student ID: "));
+        int id = readInt(keyboard, "Student ID: ");
+        Student s = sms.findStudent(id);
+
         if (s == null)
         {
             System.out.println("Student not found.");
-            return;
         }
-        System.out.println(s.getName() + " (" + s.getStudentType() + ")");
-        for (Subject sub : s.getSubjects())
+        else
         {
-            System.out.println("  " + sub.getSubjectName() + ": " + sub.getGrade());
+            System.out.println(s.getName() + " (" + s.getStudentType() + ")");
+            for (int i = 0; i < s.getSubjects().size(); i++)
+            {
+                Subject sub = s.getSubjects().get(i);
+                System.out.println("  " + sub.getSubjectName()
+                        + ": " + sub.getGrade());
+            }
+            System.out.printf("  Average: %.2f\n", s.calculateAverage());
         }
-        System.out.printf("  Average: %.2f%n", s.calculateAverage());
     }
 
-    private static void listStudents()
+    // Lists every student in the system
+    public static void listStudents(StudentManagementSystem sms)
     {
-        if (sms.getStudents().isEmpty())
+        if (sms.getStudents().size() == 0)
         {
             System.out.println("No students yet.");
         }
-        for (Student s : sms.getStudents())
+        else
         {
-            System.out.println(s.getStudentID() + " - " + s.getName()
-                    + " (" + s.getStudentType() + ")");
+            for (int i = 0; i < sms.getStudents().size(); i++)
+            {
+                Student s = sms.getStudents().get(i);
+                System.out.println(s.getStudentID() + " - " + s.getName()
+                        + " (" + s.getStudentType() + ")");
+            }
         }
     }
 
-    private static void addGrade()
+    // Adds a subject and grade to a student
+    public static void addGrade(Scanner keyboard, StudentManagementSystem sms)
     {
-        Student s = sms.findStudent(readInt("Student ID: "));
+        int id = readInt(keyboard, "Student ID: ");
+        Student s = sms.findStudent(id);
+
         if (s == null)
         {
             System.out.println("Student not found.");
-            return;
         }
-        String subject = readText("Subject name: ");
-        while (true)
+        else
         {
-            double grade = readDouble("Grade (0-100): ");
-            try
+            String subjectName = readText(keyboard, "Subject name: ");
+            boolean done = false;
+
+            while (!done)
             {
-                s.addSubject(new Subject(subject, grade));
-                System.out.println("Grade added.");
-                return;
-            }
-            catch (IllegalArgumentException e)
-            {
-                System.out.println(e.getMessage());
+                double grade = readDouble(keyboard, "Grade (0-100): ");
+                try
+                {
+                    s.addSubject(new Subject(subjectName, grade));
+                    System.out.println("Grade added.");
+                    done = true;
+                }
+                catch (IllegalArgumentException e)
+                {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
 
-    // ---------- input helpers ----------
-    private static int readInt(String prompt)
+    // Reads a whole number, asking again until the input is valid
+    public static int readInt(Scanner keyboard, String prompt)
     {
-        while (true)
+        int number = 0;
+        boolean valid = false;
+
+        while (!valid)
         {
             System.out.print(prompt);
+            String text = keyboard.nextLine();
             try
             {
-                return Integer.parseInt(input.nextLine().trim());
+                number = Integer.parseInt(text);
+                valid = true;
             }
             catch (NumberFormatException e)
             {
                 System.out.println("Please enter a whole number.");
             }
         }
+        return number;
     }
 
-    private static double readDouble(String prompt)
+    // Reads a decimal number, asking again until the input is valid
+    public static double readDouble(Scanner keyboard, String prompt)
     {
-        while (true)
+        double number = 0;
+        boolean valid = false;
+
+        while (!valid)
         {
             System.out.print(prompt);
+            String text = keyboard.nextLine();
             try
             {
-                return Double.parseDouble(input.nextLine().trim());
+                number = Double.parseDouble(text);
+                valid = true;
             }
             catch (NumberFormatException e)
             {
                 System.out.println("Please enter a number.");
             }
         }
+        return number;
     }
 
-    private static String readText(String prompt)
+    // Reads a line of text, asking again if it is empty
+    public static String readText(Scanner keyboard, String prompt)
     {
-        while (true)
+        String text = "";
+
+        while (text.length() == 0)
         {
             System.out.print(prompt);
-            String text = input.nextLine().trim();
-            if (!text.isEmpty())
+            text = keyboard.nextLine();
+            if (text.length() == 0)
             {
-                return text;
+                System.out.println("Input cannot be empty.");
             }
-            System.out.println("Input cannot be empty.");
         }
+        return text;
     }
-}   
+}
